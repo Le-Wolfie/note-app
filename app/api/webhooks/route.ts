@@ -1,6 +1,8 @@
 import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
+import dbConnect from "@/database";
+import { UserModel } from "@/models/user.model";
 
 export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
@@ -48,12 +50,45 @@ export async function POST(req: Request) {
     });
   }
 
-  // Do something with the payload
-  // For this guide, you simply log the payload to the console
-  const { id } = evt.data;
+  // Handle the event
   const eventType = evt.type;
-  console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
-  console.log("Webhook body:", body);
 
-  return new Response("", { status: 200 });
+  if (eventType === "user.created" || eventType === "user.updated") {
+    const userData = evt.data;
+    try {
+      // Save the user to the database
+      await dbConnect();
+
+      const user = await UserModel.findOneAndUpdate(
+        { clerkId: userData.id },
+        {
+          clerkId: userData.id,
+          email: userData.email_addresses[0].email_address,
+          username: userData.last_name
+            ? `${userData.first_name} ${userData.last_name}`
+            : userData.first_name,
+          imageUrl: userData.image_url,
+        },
+        {
+          upsert: true,
+          new: true,
+        }
+      );
+
+      await user.save();
+
+      return new Response("User created/updated", {
+        status: 200,
+      });
+    } catch (error) {
+      console.error("Error processing event:", error);
+      return new Response("Error occured", {
+        status: 400,
+      });
+    }
+  }
+
+  return new Response("Event not supported", {
+    status: 400,
+  });
 }
