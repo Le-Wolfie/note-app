@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
-import { Bell, Lightbulb, Trash } from "lucide-react";
+import { Archive, Bell, Lightbulb, Trash } from "lucide-react";
 
 const Sidebar = () => {
   return (
@@ -11,7 +11,7 @@ const Sidebar = () => {
       <div>
         <ul className='flex flex-col items-center gap-4'>
           <li>
-            <Link href='/'>
+            <Link href='/notes'>
               <Button size='lg' variant={"outline"} className='w-48'>
                 <div className='flex items-center justify-center gap-2'>
                   <Lightbulb />
@@ -21,7 +21,7 @@ const Sidebar = () => {
             </Link>
           </li>
           <li>
-            <Link href='/'>
+            <Link href='/reminders'>
               <Button size='lg' variant={"outline"} className='w-48'>
                 <div className='flex items-center justify-center gap-2'>
                   <Bell />
@@ -31,7 +31,17 @@ const Sidebar = () => {
             </Link>
           </li>
           <li>
-            <Link href='/'>
+            <Link href='/archive'>
+              <Button size='lg' variant={"outline"} className='w-48'>
+                <div className='flex items-center justify-center gap-2'>
+                  <Archive />
+                  <p className='text-pretty text-foreground'>Archive</p>
+                </div>
+              </Button>
+            </Link>
+          </li>
+          <li>
+            <Link href='/trash'>
               <Button size='lg' variant={"outline"} className='w-48'>
                 <div className='flex items-center justify-center gap-2'>
                   <Trash />
