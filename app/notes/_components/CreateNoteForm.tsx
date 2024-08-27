@@ -28,30 +28,39 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { createNoteAction } from "../_actions/note.actions";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type Props = {};
 
 const createNoteFormSchema = z.object({
   title: z.string().min(1, "Title cannot be empty"),
-  description: z.string(),
+  content: z.string(),
   // tags: z.array(z.string()),
 });
 
-type CreateNoteFormValues = z.infer<typeof createNoteFormSchema>;
+export type CreateNoteFormValues = z.infer<typeof createNoteFormSchema>;
 
 const CreateNoteForm = (props: Props) => {
+  const router = useRouter();
   const form = useForm<CreateNoteFormValues>({
     resolver: zodResolver(createNoteFormSchema),
     defaultValues: {
       title: "",
-      description: "",
+      content: "",
       // tags: [],
     },
   });
 
   const onSubmit = async (values: CreateNoteFormValues) => {
-    console.log(values);
-    // call api
+    const response = await createNoteAction(values);
+    if (response.success) {
+      toast.success("Note created successfully");
+      router.refresh();
+    } else {
+      toast.error(response.error?.message);
+    }
   };
 
   return (
@@ -91,7 +100,7 @@ const CreateNoteForm = (props: Props) => {
             />
             <FormField
               control={form.control}
-              name='description'
+              name='content'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Description</FormLabel>
