@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,19 +38,18 @@ type Props = {};
 const createNoteFormSchema = z.object({
   title: z.string().min(1, "Title cannot be empty"),
   content: z.string(),
-  // tags: z.array(z.string()),
 });
 
 export type CreateNoteFormValues = z.infer<typeof createNoteFormSchema>;
 
 const CreateNoteForm = (props: Props) => {
   const router = useRouter();
+  const [open, setOpen] = useState(false); // might remove, seems slower
   const form = useForm<CreateNoteFormValues>({
     resolver: zodResolver(createNoteFormSchema),
     defaultValues: {
       title: "",
       content: "",
-      // tags: [],
     },
   });
 
@@ -57,6 +57,7 @@ const CreateNoteForm = (props: Props) => {
     const response = await createNoteAction(values);
     if (response.success) {
       toast.success("Note created successfully");
+      setOpen(false); // Close the dialog
       router.refresh();
     } else {
       toast.error(response.error?.message);
@@ -64,11 +65,11 @@ const CreateNoteForm = (props: Props) => {
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <Tooltip>
         <TooltipTrigger asChild>
           <DialogTrigger asChild>
-            <Button size='icon' variant='outline'>
+            <Button size='icon' variant='outline' onClick={() => setOpen(true)}>
               <Plus />
             </Button>
           </DialogTrigger>
