@@ -3,7 +3,8 @@ import { getNotes } from "../notes/_actions/note.actions";
 
 export default async function Page() {
   const { notes } = await getNotes();
-  const filteredNotes = notes.filter((note: any) => note.markedForDeletion);
+  const filteredNotes =
+    notes.length > 0 ? notes.filter((note: any) => note.markedForDeletion) : [];
   return (
     <>
       <div className='flex flex-col justify-center items-center'>
