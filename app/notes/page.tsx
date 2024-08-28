@@ -17,13 +17,18 @@ import { EllipsisVertical } from "lucide-react";
 import React from "react";
 import CreateNoteForm from "./_components/CreateNoteForm";
 import { backendAPI } from "@/api";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import moment from "moment";
 
 async function getNotes() {
-  const clerkUser = await currentUser();
+  const clerkUser = auth();
+  const token = await clerkUser?.getToken();
 
-  const response = await backendAPI.get(`/notes/${clerkUser?.id}`);
+  const response = await backendAPI.get(`/notes/${clerkUser?.userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   return response.data;
 }

@@ -2,10 +2,10 @@
 import { backendAPI } from "@/api";
 import { revalidatePath } from "next/cache";
 import { CreateNoteFormValues } from "../_components/CreateNoteForm";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 
 export const createNoteAction = async (data: CreateNoteFormValues) => {
-  const clerkUser = await currentUser();
+  const clerkUser = auth();
   if (!clerkUser) {
     return {
       success: false,
@@ -14,12 +14,19 @@ export const createNoteAction = async (data: CreateNoteFormValues) => {
       },
     };
   }
+
+  const token = await clerkUser.getToken();
+
   const requestBody = {
     ...data,
-    clerkId: clerkUser.id,
   };
 
-  const response = await backendAPI.post(`/notes`, requestBody);
+  const response = await backendAPI.post(`/notes`, requestBody, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   if (response.status !== 201) {
     return {
