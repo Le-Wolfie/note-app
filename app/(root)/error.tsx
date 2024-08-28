@@ -12,7 +12,9 @@ export default function Error({ error }: { error: Error }) {
 
   return (
     <div className='flex justify-center w-full h-full'>
-      <h1 className='text-3xl text-center'>{error.message}</h1>
+      <h1 className='text-3xl text-center'>
+        An error occurred, try refreshing the page.
+      </h1>
     </div>
   );
 }
