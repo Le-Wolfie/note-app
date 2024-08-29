@@ -68,7 +68,7 @@ const EditNoteForm = ({
     defaultValues: {
       title: title,
       content: content,
-      reminder: reminder,
+      reminder: new Date(reminder),
     },
   });
 
@@ -94,6 +94,7 @@ const EditNoteForm = ({
     }
   };
 
+  const onInvalid = (errors: any) => console.error(errors);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -103,7 +104,10 @@ const EditNoteForm = ({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+          <form
+            onSubmit={form.handleSubmit(onSubmit, onInvalid)}
+            className='space-y-8'
+          >
             <FormField
               control={form.control}
               name='title'
