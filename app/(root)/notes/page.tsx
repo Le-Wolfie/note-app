@@ -20,7 +20,8 @@ export default async function Page({
       ? notes.filter(
           (note: any) =>
             (note.title.includes(searchParams.q) ||
-              note.content.includes(searchParams.q)) &&
+              note.content.includes(searchParams.q) ||
+              note.labels.includes(searchParams.q)) &&
             !note.markedAsArchived &&
             !note.markedForDeletion
         )
