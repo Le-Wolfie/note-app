@@ -55,7 +55,7 @@ export type CreateNoteFormValues = z.infer<typeof createNoteFormSchema>;
 const CreateNoteForm = (props: Props) => {
   const router = useRouter();
   const [open, setOpen] = useState(false); // might remove, seems slower
-  const [isReminderEnabled, setIsReminderEnabled] = useState(false); // New state for toggle
+  const [isReminderEnabled, setIsReminderEnabled] = useState(false);
   const form = useForm<CreateNoteFormValues>({
     resolver: zodResolver(createNoteFormSchema),
     defaultValues: {
