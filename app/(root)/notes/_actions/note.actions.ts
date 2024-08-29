@@ -22,6 +22,7 @@ export const createNoteAction = async (data: CreateNoteFormValues) => {
 
   const requestBody = {
     ...data,
+    setAsReminder: data.reminder ? true : false,
   };
 
   const response = await backendAPI.post(`/notes`, requestBody, {
