@@ -24,6 +24,9 @@ export default async function Page({
   return (
     <>
       <div className='flex flex-col justify-center items-center'>
+        <h2 className='text-pretty text-xl font-bold'>
+          Notes in the trash are permanently deleted after a week.
+        </h2>
         <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 p-4'>
           {filteredNotes.length > 0
             ? filteredNotes.map((note: any) => (
