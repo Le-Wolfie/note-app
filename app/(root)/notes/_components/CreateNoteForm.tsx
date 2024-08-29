@@ -18,7 +18,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Bell, CalendarIcon, Plus } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -32,12 +32,22 @@ import { Textarea } from "@/components/ui/textarea";
 import { createNoteAction } from "../_actions/note.actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { Toggle } from "@/components/ui/toggle";
 
 type Props = {};
 
 const createNoteFormSchema = z.object({
   title: z.string().min(1, "Title cannot be empty"),
   content: z.string(),
+  reminder: z.date().optional(),
 });
 
 export type CreateNoteFormValues = z.infer<typeof createNoteFormSchema>;
@@ -45,11 +55,13 @@ export type CreateNoteFormValues = z.infer<typeof createNoteFormSchema>;
 const CreateNoteForm = (props: Props) => {
   const router = useRouter();
   const [open, setOpen] = useState(false); // might remove, seems slower
+  const [isReminderEnabled, setIsReminderEnabled] = useState(false); // New state for toggle
   const form = useForm<CreateNoteFormValues>({
     resolver: zodResolver(createNoteFormSchema),
     defaultValues: {
       title: "",
       content: "",
+      reminder: undefined,
     },
   });
 
@@ -57,10 +69,22 @@ const CreateNoteForm = (props: Props) => {
     const response = await createNoteAction(values);
     if (response.success) {
       toast.success("Note created successfully");
+      form.reset();
       setOpen(false); // Close the dialog
       router.refresh();
     } else {
       toast.error(response.error?.message);
+    }
+  };
+
+  const reminderDate = form.watch("reminder");
+
+  // Handle toggle change
+  const handleToggleChange = (isPressed: boolean) => {
+    setIsReminderEnabled(isPressed);
+    if (!isPressed) {
+      // Clear the reminder date if the toggle is turned off
+      form.setValue("reminder", undefined);
     }
   };
 
@@ -110,6 +134,56 @@ const CreateNoteForm = (props: Props) => {
                       {...field}
                       placeholder='What do you want to write?'
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='reminder'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className='flex items-center mb-2'>
+                    <Toggle
+                      className='ml-2'
+                      pressed={isReminderEnabled}
+                      onPressedChange={handleToggleChange}
+                    >
+                      <p className='flex gap-2 items-center text-pretty'>
+                        <Bell /> Set as reminder
+                      </p>
+                    </Toggle>
+                  </FormLabel>
+                  <FormControl>
+                    <div className={cn(isReminderEnabled ? "block" : "hidden")}>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "text-left font-normal",
+                              reminderDate
+                                ? "text-secondary-foreground"
+                                : "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className='mr-2 h-4 w-4' />
+                            {reminderDate
+                              ? format(new Date(reminderDate), "PPP")
+                              : "Select a date"}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className='w-auto p-0'>
+                          <Calendar
+                            mode='single'
+                            selected={reminderDate}
+                            onSelect={(date) => form.setValue("reminder", date)}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
