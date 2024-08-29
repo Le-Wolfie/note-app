@@ -32,6 +32,7 @@ type Props = {
     createdAt: Date;
     updatedAt: Date;
     createdBy: ObjectId;
+    reminder: Date;
     markedForDeletion: boolean;
     markedAsArchived: boolean;
   };
@@ -40,7 +41,12 @@ type Props = {
 export default function Notes({ note }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <EditNoteForm title={note.title} content={note.content} noteId={note._id}>
+    <EditNoteForm
+      title={note.title}
+      content={note.content}
+      noteId={note._id}
+      reminder={note.reminder}
+    >
       <Card className='relative mb-4 break-inside-avoid border-2 hover:bg-primary-foreground transition-colors cursor-pointer'>
         <CardHeader className='relative p-4 pb-6'>
           <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
