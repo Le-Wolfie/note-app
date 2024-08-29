@@ -7,8 +7,31 @@ import { UserButton } from "@clerk/nextjs";
 import React from "react";
 import { ThemeToggle } from "./theme-toggle";
 import { LightbulbIcon, Search } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 
 const Navbar = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const handleKeyDown = (e: any) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      switch (pathname) {
+        case "/notes":
+          router.push(`/notes?q=${e.target.value}`);
+          break;
+        case "/archive":
+          router.push(`/archive?q=${e.target.value}`);
+          break;
+        case "/reminders":
+          router.push(`/reminders?q=${e.target.value}`);
+          break;
+        case "/trash":
+          router.push(`/trash?q=${e.target.value}`);
+          break;
+        default:
+          break;
+      }
+    }
+  };
   return (
     <Card className='flex justify-between items-center p-4 rounded-none border-b-4'>
       <div className='flex items-center space-x-2'>
@@ -23,6 +46,7 @@ const Navbar = () => {
             type='text'
             placeholder='Search'
             className='w-full p-2 pl-10 rounded-md'
+            onKeyDown={handleKeyDown}
           />
         </div>
       </div>
