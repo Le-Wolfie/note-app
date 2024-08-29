@@ -60,7 +60,7 @@ const EditNoteForm = ({
   reminder,
   children,
 }: Props) => {
-  const [isReminderEnabled, setIsReminderEnabled] = useState(false); // New state for toggle
+  const [isReminderEnabled, setIsReminderEnabled] = useState(Boolean(reminder));
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const form = useForm<EditNoteFormValues>({
