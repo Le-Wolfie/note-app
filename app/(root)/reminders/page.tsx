@@ -6,10 +6,7 @@ export default async function Page() {
   // Display only the notes that are not archived or deleted and have a reminder value
   const filteredNotes =
     notes.length > 0
-      ? notes.filter(
-          (note: any) =>
-            !note.markedAsArchived && !note.markedForDeletion && note.reminder
-        )
+      ? notes.filter((note: any) => !note.markedForDeletion && note.reminder)
       : [];
   return (
     <>
