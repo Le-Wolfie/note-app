@@ -2,13 +2,27 @@ import { getNotes } from "./_actions/note.actions";
 import CreateNoteForm from "./_components/CreateNoteForm";
 import Notes from "./_components/Note";
 
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: {
+    q: string;
+  };
+}) {
   const { notes } = await getNotes();
-  // Display only the notes that are not archived or deleted
+  if (searchParams.q === null || searchParams.q === undefined) {
+    searchParams.q = "";
+  }
+
+  // Display only the notes that match the query (if it exists) and not archived or deleted
   const filteredNotes =
     notes.length > 0
       ? notes.filter(
-          (note: any) => !note.markedAsArchived && !note.markedForDeletion
+          (note: any) =>
+            (note.title.includes(searchParams.q) ||
+              note.content.includes(searchParams.q)) &&
+            !note.markedAsArchived &&
+            !note.markedForDeletion
         )
       : [];
   return (
@@ -20,7 +34,9 @@ export default async function Page() {
             ? filteredNotes.map((note: any) => (
                 <Notes key={note._id} note={note} />
               ))
-            : "No notes found, create one!"}
+            : searchParams.q === ""
+            ? "No notes found, create one!"
+            : "No notes found with that query"}
         </div>
       </div>
     </>

@@ -1,12 +1,27 @@
 import { getNotes } from "../notes/_actions/note.actions";
 import Notes from "../notes/_components/Note";
 
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: {
+    q: string;
+  };
+}) {
+  if (searchParams.q === null || searchParams.q === undefined) {
+    searchParams.q = "";
+  }
   const { notes } = await getNotes();
-  // Display only the notes that are not archived or deleted and have a reminder value
+  // Display only the notes that match the query (if it exists) and not archived or deleted and have a reminder value
   const filteredNotes =
     notes.length > 0
-      ? notes.filter((note: any) => !note.markedForDeletion && note.reminder)
+      ? notes.filter(
+          (note: any) =>
+            (note.title.includes(searchParams.q) ||
+              note.content.includes(searchParams.q)) &&
+            !note.markedForDeletion &&
+            note.reminder
+        )
       : [];
   return (
     <>
@@ -16,7 +31,9 @@ export default async function Page() {
             ? filteredNotes.map((note: any) => (
                 <Notes key={note._id} note={note} />
               ))
-            : "You have no reminders set."}
+            : searchParams.q === ""
+            ? "You have no reminders set"
+            : "No reminders found"}
         </div>
       </div>
     </>
