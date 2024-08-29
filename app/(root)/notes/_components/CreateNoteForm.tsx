@@ -18,7 +18,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Bell, CalendarIcon, Plus } from "lucide-react";
+import { Bell, CalendarIcon, PencilIcon, Plus } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -47,6 +47,7 @@ type Props = {};
 const createNoteFormSchema = z.object({
   title: z.string().min(1, "Title cannot be empty"),
   content: z.string(),
+  labels: z.string().optional(),
   reminder: z.date().optional(),
 });
 
@@ -61,6 +62,7 @@ const CreateNoteForm = (props: Props) => {
     defaultValues: {
       title: "",
       content: "",
+      labels: "",
       reminder: undefined,
     },
   });
@@ -79,8 +81,8 @@ const CreateNoteForm = (props: Props) => {
 
   const reminderDate = form.watch("reminder");
 
-  // Handle toggle change
-  const handleToggleChange = (isPressed: boolean) => {
+  // Handle reminder toggle change
+  const handleReminderToggleChange = (isPressed: boolean) => {
     setIsReminderEnabled(isPressed);
     if (!isPressed) {
       // Clear the reminder date if the toggle is turned off
@@ -141,6 +143,36 @@ const CreateNoteForm = (props: Props) => {
             />
             <FormField
               control={form.control}
+              name='labels'
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant={"outline"}
+                          className='text-left font-normal'
+                        >
+                          <p className='flex gap-2 items-center'>
+                            <PencilIcon /> Add labels
+                          </p>
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className='w-auto p-0'>
+                        <Input
+                          placeholder='Add labels'
+                          {...field}
+                          className='w-full'
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name='reminder'
               render={({ field }) => (
                 <FormItem>
@@ -148,7 +180,7 @@ const CreateNoteForm = (props: Props) => {
                     <Toggle
                       className='ml-2'
                       pressed={isReminderEnabled}
-                      onPressedChange={handleToggleChange}
+                      onPressedChange={handleReminderToggleChange}
                     >
                       <p className='flex gap-2 items-center text-pretty'>
                         <Bell /> Set as reminder

@@ -33,7 +33,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Bell, CalendarIcon } from "lucide-react";
+import { Bell, CalendarIcon, PencilIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 
@@ -41,6 +41,7 @@ type Props = {
   title: string;
   content: string;
   noteId: string;
+  labels: string[];
   reminder: Date;
   children: React.ReactNode;
 };
@@ -48,6 +49,7 @@ type Props = {
 const editNoteFormSchema = z.object({
   title: z.string().min(1, "Title cannot be empty"),
   content: z.string(),
+  labels: z.string().optional(),
   reminder: z.date().optional(),
 });
 
@@ -58,6 +60,7 @@ const EditNoteForm = ({
   content,
   noteId,
   reminder,
+  labels,
   children,
 }: Props) => {
   const [isReminderEnabled, setIsReminderEnabled] = useState(Boolean(reminder));
@@ -68,6 +71,7 @@ const EditNoteForm = ({
     defaultValues: {
       title: title,
       content: content,
+      labels: labels.join(", "),
       reminder: new Date(reminder),
     },
   });
@@ -132,6 +136,50 @@ const EditNoteForm = ({
                       {...field}
                       placeholder='What do you want to write?'
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='labels'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className='flex gap-2 mb-2'>
+                    {labels.length > 0
+                      ? labels.map((label) => {
+                          return (
+                            <span
+                              key={label}
+                              className='rounded-full bg-primary-foreground text-primary-background px-2 py-1'
+                            >
+                              {label}
+                            </span>
+                          );
+                        })
+                      : "No labels"}
+                  </FormLabel>
+                  <FormControl>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant={"outline"}
+                          className='text-left font-normal'
+                        >
+                          <p className='flex gap-2 items-center'>
+                            <PencilIcon /> Add labels
+                          </p>
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className='w-auto p-0'>
+                        <Input
+                          placeholder='Add labels'
+                          {...field}
+                          className='w-full'
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -23,6 +23,7 @@ export const createNoteAction = async (data: CreateNoteFormValues) => {
   const requestBody = {
     ...data,
     setAsReminder: data.reminder ? true : false,
+    labels: data.labels ? data.labels.split(", ") : [],
   };
 
   const response = await backendAPI.post(`/notes`, requestBody, {
@@ -65,6 +66,7 @@ export const updateNoteAction = async (
   const requestBody = {
     ...data,
     setAsReminder: data.reminder ? true : false,
+    labels: data.labels ? data.labels.split(", ") : [],
   };
 
   const response = await backendAPI.post(`/notes/${noteId}`, requestBody, {

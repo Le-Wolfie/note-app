@@ -33,6 +33,7 @@ type Props = {
     updatedAt: Date;
     createdBy: ObjectId;
     reminder: Date;
+    labels: string[];
     markedForDeletion: boolean;
     markedAsArchived: boolean;
   };
@@ -44,6 +45,7 @@ export default function Notes({ note }: Props) {
     <EditNoteForm
       title={note.title}
       content={note.content}
+      labels={note.labels}
       noteId={note._id}
       reminder={note.reminder}
     >
