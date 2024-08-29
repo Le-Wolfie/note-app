@@ -176,5 +176,11 @@ export async function getNotes() {
     },
   });
 
+  if (response.status === 404) {
+    return {
+      notes: [],
+    };
+  }
+
   return response.data;
 }
