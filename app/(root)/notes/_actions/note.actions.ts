@@ -63,6 +63,7 @@ export const updateNoteAction = async (
 
   const requestBody = {
     ...data,
+    setAsReminder: data.reminder ? true : false,
   };
 
   const response = await backendAPI.post(`/notes/${noteId}`, requestBody, {
@@ -161,7 +162,6 @@ export const deleteNoteAction = async (data: DeleteNoteFormValues) => {
 
   return { success: true };
 };
-
 
 export async function getNotes() {
   const clerkUser = auth();
