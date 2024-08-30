@@ -72,7 +72,7 @@ const EditNoteForm = ({
       title: title,
       content: content,
       labels: labels.join(", "),
-      reminder: new Date(reminder),
+      reminder: reminder ? new Date(reminder) : undefined,
     },
   });
 
