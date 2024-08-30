@@ -36,7 +36,7 @@ const Navbar = () => {
     <Card className='flex justify-between items-center p-4 rounded-none border-b-4'>
       <div className='flex items-center space-x-2'>
         <LightbulbIcon className='h-12 w-12 text-yellow-500' />
-        <span className='font-bold text-xl'>Keep</span>
+        <span className='font-bold text-xl text-pretty'>Noted</span>
       </div>
 
       <div className='flex-grow mx-4 px-4'>
